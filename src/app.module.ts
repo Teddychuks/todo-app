@@ -8,11 +8,11 @@ import { TodoModule } from './todo/todo.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'mysql.railway.internal',
       port: 3306,
       username: 'root',
-      password: 'Teddychuks', 
-      database: 'todo_db',     
+      password: 'kSXtAIvGqstMsgvJMCQEqgPlLmDLghHy', 
+      database: 'railway',     
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: false,       
     }),
