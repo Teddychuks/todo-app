@@ -9,14 +9,5 @@ export class Todo {
   title: string;
 
   @Column({ default: false })
-  isCompleted: boolean;
-
-  @Column({ type: 'text', nullable: true })
-  description: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
+  completed: boolean;
 }

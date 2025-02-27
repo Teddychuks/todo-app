@@ -1,38 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get} from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { CreateTodoDto } from './dto/create-todo.dto';
+import { CreateTodoDto, FindOneParamsDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
+import { GrpcMethod } from '@nestjs/microservices';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import { Empty } from 'proto/colleague';
+import { Observable } from 'rxjs';
 
 @Controller('todos')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
-  @Post()
-  create(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
-    return this.todoService.create(createTodoDto);
+  @GrpcMethod('TodoService', 'CreateTodo')
+  create( payload: CreateTodoDto): Promise<Todo> {
+    return this.todoService.create(payload);
   }
 
-  @Get()
-  findAll(): Promise<Todo[]> {
+  @GrpcMethod('TodoService', 'GetTodos')
+  findAll(): Promise<{ todos: Todo[] }> {
     return this.todoService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Todo> {
-    return this.todoService.findOne(id);
-  }
+@GrpcMethod('TodoService', 'GetTodoById')
+    getTodoById(params: FindOneParamsDto): Promise<Todo | null> {
+        return this.todoService.findOne(params.id);
+    }
 
-  @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateTodoDto: UpdateTodoDto,
-  ): Promise<Todo> {
-    return this.todoService.update(id, updateTodoDto);
-  }
+    @GrpcMethod('TodoService', 'UpdateTodoById')
+    updateTodoById(payload: UpdateTodoDto): Promise<UpdateResult> {
+        const attr = { title: payload.title, completed: payload.completed };
+        return this.todoService.updateById(payload.id, attr);
+    }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.todoService.remove(id);
-  }
+    @GrpcMethod('TodoService', 'DeleteTodoById')
+    deleteTodoById(params: FindOneParamsDto): Promise<DeleteResult> {
+        return this.todoService.deleteById(params.id);
+    }
+
+    @Get('/colleague')
+    getTodosFromColleague(_: Empty): Observable<{ todos: Todo[] }> {
+        return this.todoService.getTodosFromColleague();
+    }
 }
+

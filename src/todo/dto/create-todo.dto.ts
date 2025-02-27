@@ -1,15 +1,13 @@
-import { IsNotEmpty, IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsDefined } from 'class-validator';
 
 export class CreateTodoDto {
   @IsNotEmpty()
   @IsString()
   title: string;
+}
 
-  @IsOptional()
+export class FindOneParamsDto {
   @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isCompleted?: boolean;
+  @IsDefined()
+  id: string;
 }
