@@ -3,12 +3,12 @@ import { Todo } from './src/todo/entities/todo.entity';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
-  host: 'mysql.railway.internal',
-  port: 3306,
-  username: 'root',
-  password: 'kSXtAIvGqstMsgvJMCQEqgPlLmDLghHy',
-  database: 'railway',
+  host: process.env.MYSQLHOST,
+  port: parseInt(process.env.MYSQLPORT || '3306'),
+  username: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
   entities: [Todo],
   migrations: ['src/migrations/*.ts'],
-  synchronize: false,
+  synchronize: true,
 });
